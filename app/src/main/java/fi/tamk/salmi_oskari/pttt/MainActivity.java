@@ -30,13 +30,12 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ProjectTask> testTasks1 = new ArrayList<>();
     ArrayList<ProjectTask> testTasks2 = new ArrayList<>();
     ArrayList<ProjectTask> testTasks3 = new ArrayList<>();
+    ArrayList<Person> testPersonData = new ArrayList<>();
 
     /**
      * Variable to store users chosen project's index
      */
     private int chosenIndex;
-
-    private SharedPreferences prefs;
 
 
     /**
@@ -76,7 +75,12 @@ public class MainActivity extends AppCompatActivity {
                 chosenIndex = position;
 
 
-                Intent i = new Intent(getApplicationContext(), SingleProjectView.class);
+                Intent i = new Intent(MainActivity.this, SingleProjectView.class);
+
+                System.out.println("PASSING THIS :");
+                System.out.println(temp.getPersons());
+                System.out.println(temp.getTasks());
+                System.out.println("----------");
 
                 // pass project-object to other activity for modification
                 i.putExtra("passedObject", temp);
@@ -96,9 +100,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+
+        super.onActivityResult(requestCode, resultCode, data);
+
         // update project to match user's added tasks
         allProjects.set(chosenIndex, (Project) data.getExtras().get("project"));
 
+        Project receivedProject = (Project) data.getExtras().get("project");
+
+
+        System.out.println("ONACTIVITYRESULT:");
+        System.out.println(allProjects.get(chosenIndex).getPersons());
+        System.out.println(allProjects.get(chosenIndex).getTasks());
+        System.out.println("------------");
     }
 
 
@@ -135,6 +149,12 @@ public class MainActivity extends AppCompatActivity {
      * Method for generating test data to use for development purposes
      */
     private void generateTestData() {
+
+        testPersonData.add(new Person("pekka"));
+        testPersonData.add(new Person("tauno"));
+        testPersonData.add(new Person("kerttu"));
+
+
         testTasks1.add(new ProjectTask("debuggign", 10));
         testTasks1.add(new ProjectTask("lazing around", 666));
 
@@ -146,9 +166,17 @@ public class MainActivity extends AppCompatActivity {
         testTasks3.add(new ProjectTask("sleeping", 2));
         testTasks3.add(new ProjectTask("boxing", 13.5f));
 
-        allProjects.add(new Project("testOne", "desc1", testTasks1));
-        allProjects.add(new Project("testTwo", "desc2", testTasks2));
-        allProjects.add(new Project("testThree", "desc3", testTasks3));
+
+        allProjects.add(new Project("testOne", "desc1", testTasks1, testPersonData));
+        allProjects.add(new Project("testTwo", "desc2", testTasks2, testPersonData));
+        allProjects.add(new Project("testThree", "desc3", testTasks3, testPersonData));
+
+
+        System.out.println("GENERATETESTADAT:");
+        System.out.println(allProjects.get(2).getPersons());
+        System.out.println(allProjects.get(2).getTasks());
+        System.out.println("---------");
+
 
     }
 

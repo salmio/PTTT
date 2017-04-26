@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * An entity class reprenting a project-object in the software
+ * An entity class representing a project-object in the software
  */
 class Project implements Serializable {
 
@@ -13,6 +13,7 @@ class Project implements Serializable {
     private String description;
     private float time;
     private ArrayList<ProjectTask> tasks = new ArrayList<>();
+    private ArrayList<Person> persons = new ArrayList<>();
 
 
     /**
@@ -66,6 +67,21 @@ class Project implements Serializable {
         this.title = title;
         this.description = description;
         this.tasks = tasks;
+    }
+
+    /**
+     * A constructor for Project-object
+     *
+     * @param title string to set as title
+     * @param description string to set as description
+     * @param tasks an ArrayList of tasks to set
+     * @param persons an ArayList to be set as persons
+     */
+    public Project(String title, String description, ArrayList<ProjectTask> tasks, ArrayList<Person> persons) {
+        this.title = title;
+        this.description = description;
+        this.tasks = tasks;
+        this.persons = persons;
     }
 
     /**
@@ -153,6 +169,25 @@ class Project implements Serializable {
      */
     public void addTask(ProjectTask task) {
         tasks.add(task);
+    }
+
+
+    /**
+     * Getter method for persons
+     *
+     * @return arraylist containing persons
+     */
+    public ArrayList<Person> getPersons() {
+        return persons;
+    }
+
+    /**
+     * Setter method for persons
+     *
+     * @param persons arraylist to set as persons
+     */
+    public void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
     }
 
     /**

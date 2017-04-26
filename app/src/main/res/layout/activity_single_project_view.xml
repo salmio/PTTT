@@ -8,16 +8,31 @@
     tools:context="fi.tamk.salmi_oskari.pttt.SingleProjectView">
 
 
-    <ListView
-        android:id="@+id/taskListView"
+    <TableRow
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.75"
+        android:layout_weight="0.75">
 
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        <ListView
 
-    </ListView>
+            android:id="@+id/taskListView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5">
+
+        </ListView>
+
+
+        <ListView
+            android:id="@+id/personListView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            >
+
+        </ListView>
+
+    </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
@@ -25,13 +40,20 @@
         android:layout_weight="0.075">
 
         <Button
-            android:id="@+id/addButton"
+            android:id="@+id/addTaskButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:onClick="addTask"
             android:text="Add task" />
 
+        <Button
+            android:id="@+id/addPersonButtton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="addPerson"
+            android:text="Add Person" />
 
 
     </TableRow>

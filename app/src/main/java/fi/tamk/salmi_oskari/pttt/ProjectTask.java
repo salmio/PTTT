@@ -2,6 +2,7 @@ package fi.tamk.salmi_oskari.pttt;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 
 /**
@@ -19,8 +20,17 @@ class ProjectTask implements Serializable {
      */
     private float time;
 
-    /* placeholder until person class is implemented */
-    private String person;
+    /**
+     * ArrayList containing persons included in task
+     */
+    private ArrayList<Person> persons = new ArrayList<>();
+
+    /**
+     * Array of boolean flags indicating if a button is chosen or not
+     *
+     * TODO implement this better
+     */
+    boolean[] selectedItems = new boolean[3];
 
 
     /**
@@ -32,6 +42,7 @@ class ProjectTask implements Serializable {
     public ProjectTask(String title, float time) {
         this.title = title;
         this.time = time;
+
     }
 
 
@@ -76,10 +87,75 @@ class ProjectTask implements Serializable {
 
 
     /**
+     * Getter method for Persons
+     *
+     * @return ArrayList containing all persons contained in task
+     */
+    public ArrayList<Person> getPersons() {
+        return persons;
+    }
+
+
+    /**
+     * Setter method for persons
+     *
+     * @param persons ArrayList to be set as current Persons
+     */
+    public void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
+    }
+
+
+    /**
+     * Method to add person to projecttask
+     *
+     * @param person Person to be aded
+     */
+    public void addPerson(Person person) {
+        persons.add(person);
+    }
+
+    /**
+     * Method to remove a person from the task
+     *
+     * @param person person object to be removed
+     */
+    public void removePerson(Person person) {
+        persons.remove(person);
+    }
+
+
+    /**
+     * Getter method for selected items array
+     *
+     * @return boolean[] array of selected items
+     */
+    public boolean[] getSelectedItems() {
+        return selectedItems;
+    }
+
+
+    /**
+     * Setter method for selected items
+     *
+     * @param selectedItems array to be set as selected items
+     */
+    public void setSelectedItems(boolean[] selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+
+    /**
      * Tostring method for printing
      */
     @Override
     public String toString() {
-        return getTitle() + ": " + getTime() + "h";
+        if (persons.size() != 0) {
+            return getTitle() + ": " + getTime() + "h" + "\n" + persons;
+
+        } else {
+            return getTitle() + ": " + getTime() + "h";
+        }
     }
+
+
 }
