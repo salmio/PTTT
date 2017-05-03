@@ -1,6 +1,9 @@
 package fi.tamk.salmi_oskari.pttt;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,7 +11,7 @@ import java.util.ArrayList;
 /**
  * An entity class reprenting a task-object inside project-object
  */
-class ProjectTask implements Serializable {
+class ProjectTask implements Parcelable {
 
     /**
      * Current title of task
@@ -158,4 +161,36 @@ class ProjectTask implements Serializable {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeFloat(this.time);
+        dest.writeList(this.persons);
+        dest.writeBooleanArray(this.selectedItems);
+    }
+
+    protected ProjectTask(Parcel in) {
+        this.title = in.readString();
+        this.time = in.readFloat();
+        this.persons = new ArrayList<Person>();
+        in.readList(this.persons, Person.class.getClassLoader());
+        this.selectedItems = in.createBooleanArray();
+    }
+
+    public static final Parcelable.Creator<ProjectTask> CREATOR = new Parcelable.Creator<ProjectTask>() {
+        @Override
+        public ProjectTask createFromParcel(Parcel source) {
+            return new ProjectTask(source);
+        }
+
+        @Override
+        public ProjectTask[] newArray(int size) {
+            return new ProjectTask[size];
+        }
+    };
 }

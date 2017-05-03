@@ -1,19 +1,55 @@
 package fi.tamk.salmi_oskari.pttt;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * An entity class representing a project-object in the software
  */
-class Project implements Serializable {
+class Project implements Parcelable {
 
+    /**
+     * Title for project
+     */
     private String title;
+
+    /**
+     * description for project
+     */
     private String description;
+
+    /**
+     * Time spent on project
+     */
     private float time;
+
+    /**
+     * ArrayList containing all tasks assigned to project
+     */
     private ArrayList<ProjectTask> tasks = new ArrayList<>();
+
+    /**
+     * ArrayList containing all persons assigned to project
+     */
     private ArrayList<Person> persons = new ArrayList<>();
+
+
+
+    /**
+     * A constructor for Project-object
+     *
+     * @param title String to set as title
+     * @param description String to be set as description
+     */
+    public Project(String title, String description) {
+        this.title = title;
+        this.description= description;
+    }
+
 
 
     /**
@@ -195,8 +231,43 @@ class Project implements Serializable {
      */
     @Override
     public String toString() {
-        return "Title: " + getTitle() + ", Desc: " + getDescription();
+        return "Title: " + getTitle() + "\n     Desc: " + getDescription();
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeFloat(this.time);
+        dest.writeList(this.persons);
+        dest.writeList(this.tasks);
+    }
+
+    protected Project(Parcel in) {
+        this.title = in.readString();
+        this.description = in.readString();
+        this.time = in.readFloat();
+        this.persons = new ArrayList<Person>();
+        in.readList(this.persons, Person.class.getClassLoader());
+        this.tasks = new ArrayList<ProjectTask>();
+        in.readList(this.tasks, ProjectTask.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Project> CREATOR = new Parcelable.Creator<Project>() {
+        @Override
+        public Project createFromParcel(Parcel source) {
+            return new Project(source);
+        }
+
+        @Override
+        public Project[] newArray(int size) {
+            return new Project[size];
+        }
+    };
 }

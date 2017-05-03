@@ -9,14 +9,37 @@
     tools:context="fi.tamk.salmi_oskari.pttt.MainActivity">
 
 
-    <ListView
-        android:id="@+id/projectListView"
+    <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        >
 
-    </ListView>
+        <ListView
+            android:id="@+id/projectListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+        </ListView>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.075">
+
+        <Button
+            android:id="@+id/addProjectButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="addProject"
+            android:text="Add Project" />
+
+
+    </TableRow>
 
 
 </LinearLayout>

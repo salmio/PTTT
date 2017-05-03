@@ -1,19 +1,21 @@
 package fi.tamk.salmi_oskari.pttt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Main activity for the application
@@ -23,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     /* Local storage for all projects */
     ArrayList<Project> allProjects = new ArrayList<>();
 
-    /* adapter for listview */
-    private ArrayAdapter<Project> adapter;
+    /* projectAdapter for listview */
+    private ArrayAdapter<Project> projectAdapter;
 
     /* test data for projects */
     ArrayList<ProjectTask> testTasks1 = new ArrayList<>();
@@ -49,12 +51,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        generateTestData();
+        // generate testdata on first startup
+        if (savedInstanceState == null) {
+            generateTestData();
+        }
 
 
+        // Restore state of allProjets
+        if (savedInstanceState != null) {
+            allProjects = savedInstanceState.getParcelableArrayList("allProjects");
+        }
+
+
+        // put contents of allProjects to listview visible
         ListView projectListView = (ListView) findViewById(R.id.projectListView);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allProjects);
-        projectListView.setAdapter(adapter);
+        projectAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allProjects);
+        projectListView.setAdapter(projectAdapter);
         projectListView.setOnItemClickListener(ListListener());
 
     }
@@ -84,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // pass project-object to other activity for modification
                 i.putExtra("passedObject", temp);
-
                 startActivityForResult(i, 1);
             }
         };
@@ -106,13 +117,9 @@ public class MainActivity extends AppCompatActivity {
         // update project to match user's added tasks
         allProjects.set(chosenIndex, (Project) data.getExtras().get("project"));
 
-        Project receivedProject = (Project) data.getExtras().get("project");
+        //Project receivedProject = (Project) data.getExtras().get("project");
 
 
-        System.out.println("ONACTIVITYRESULT:");
-        System.out.println(allProjects.get(chosenIndex).getPersons());
-        System.out.println(allProjects.get(chosenIndex).getTasks());
-        System.out.println("------------");
     }
 
 
@@ -125,8 +132,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
 
-        // save users choice so can modify the correct project later
+        // restore users choice from bundle, so can modify correct project
         chosenIndex = savedInstanceState.getInt("index");
+        //  allProjects = savedInstanceState.getParcelableArrayList("allProjects");
+
         super.onRestoreInstanceState(savedInstanceState);
 
     }
@@ -139,8 +148,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        // restore users choice from bundle, so can modify correct project
+
+        // save users choice so can modify the correct project later
         outState.putInt("index", chosenIndex);
+        outState.putParcelableArrayList("allProjects", allProjects);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -172,13 +184,60 @@ public class MainActivity extends AppCompatActivity {
         allProjects.add(new Project("testThree", "desc3", testTasks3, testPersonData));
 
 
-        System.out.println("GENERATETESTADAT:");
-        System.out.println(allProjects.get(2).getPersons());
-        System.out.println(allProjects.get(2).getTasks());
-        System.out.println("---------");
-
-
     }
 
 
+    /**
+     * Method for creating a new project
+     *
+     * @param view View which invoked the method
+     */
+    public void addProject(View view) {
+
+        // customize alert dialog
+        LinearLayoutCompat layout = new LinearLayoutCompat(this);
+        layout.setOrientation(LinearLayoutCompat.VERTICAL);
+
+        final EditText editTextOne = new EditText(this);
+        editTextOne.setHint("Title");
+
+        final EditText editTextTwo = new EditText(this);
+        editTextTwo.setHint("Description");
+
+        layout.addView(editTextOne);
+        layout.addView(editTextTwo);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("New Project");
+        alert.setView(layout);
+
+        alert.setPositiveButton("add", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+
+                String titleText;
+                String descriptionText;
+
+
+
+                if (!TextUtils.isEmpty(editTextOne.getText())) {
+                    titleText = editTextOne.getText().toString();
+                    descriptionText = editTextTwo.getText().toString();
+                    allProjects.add(new Project(titleText, descriptionText));
+                    projectAdapter.notifyDataSetChanged();
+
+                }
+            }
+        });
+
+        alert.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+
+        alert.show();
+
+
+    }
 }

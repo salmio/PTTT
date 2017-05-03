@@ -35,13 +35,13 @@ public class SingleProjectView extends AppCompatActivity {
 
 
     /**
-     * projectTaskAdapter to use with task listview
+     * ArrayAdapter to use with task listview
      */
     private ArrayAdapter<ProjectTask> projectTaskAdapter;
 
 
     /**
-     * projectTaskAdapter to use with person listview
+     * ArrayAdapter to use with person listview
      */
     private ArrayAdapter<Person> personAdapter;
 
@@ -62,11 +62,6 @@ public class SingleProjectView extends AppCompatActivity {
      */
     boolean[] selectedItems;
 
-    ArrayList<Boolean> selectedItemsArrayList = new ArrayList<>();
-
-
-    ProjectTask selectedTask;
-
 
     /**
      * Lifecycle method onCreate
@@ -80,8 +75,6 @@ public class SingleProjectView extends AppCompatActivity {
 
 
         receiveData();
-
-        // test data for persons
 
 
         selectedItems = new boolean[allPersons.size()];
@@ -131,7 +124,7 @@ public class SingleProjectView extends AppCompatActivity {
 
 
         Intent i = getIntent();
-        project = (Project) i.getSerializableExtra("passedObject");
+        project = (Project) i.getParcelableExtra("passedObject");
         allTasks = project.getTasks();
         allPersons = project.getPersons();
         ListView taskListView = (ListView) findViewById(R.id.taskListView);
@@ -175,7 +168,7 @@ public class SingleProjectView extends AppCompatActivity {
         layout.addView(editTextTwo);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("New task");
+        alert.setTitle("New Task");
         alert.setView(layout);
 
         alert.setPositiveButton("add", new DialogInterface.OnClickListener() {
@@ -190,7 +183,10 @@ public class SingleProjectView extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(editTextOne.getText()) || timeFloat != 0) {
                     titleText = editTextOne.getText().toString();
-                    allTasks.add(new ProjectTask(titleText, timeFloat));
+
+                    ProjectTask toAdd = new ProjectTask(titleText, timeFloat);
+                    toAdd.setSelectedItems(selectedItems);
+                    allTasks.add(toAdd);
                     projectTaskAdapter.notifyDataSetChanged();
 
                 }
@@ -221,7 +217,7 @@ public class SingleProjectView extends AppCompatActivity {
         editTextOne.setHint("Name");
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("New person");
+        alert.setTitle("New Person");
         alert.setView(layout);
 
         layout.addView(editTextOne);
@@ -278,10 +274,6 @@ public class SingleProjectView extends AppCompatActivity {
                 AlertDialog.Builder personAlert = new AlertDialog.Builder(SingleProjectView.this);
                 personAlert.setTitle("Modify persons in task");
 
-
-//                for (int i = 0; i < selectedItems.length; i++) {
-//                    System.out.println(selectedItems[i]);
-//                }
 
 
                 selectedItems = allTasks.get(position).getSelectedItems();
@@ -345,6 +337,9 @@ public class SingleProjectView extends AppCompatActivity {
     }
 
 
+    /**
+     * Method for refactoring a primitive array to increase it's size by 1
+     */
     public void increaseSelectedSize() {
 
 
