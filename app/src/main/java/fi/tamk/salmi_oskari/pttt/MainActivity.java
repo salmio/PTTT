@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,10 +21,16 @@ import java.util.ArrayList;
  */
 public class MainActivity extends AppCompatActivity {
 
-    /* Local storage for all projects */
+
+    /**
+     * Local storage for all projects
+     */
     ArrayList<Project> allProjects = new ArrayList<>();
 
-    /* projectAdapter for listview */
+
+    /**
+     * ArrayAdapater for projects to be used with a listview
+     */
     private ArrayAdapter<Project> projectAdapter;
 
     /* test data for projects */
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Lifecycle method onCreate
      *
-     * @param savedInstanceState
+     * @param savedInstanceState Bundle to save local data to
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         // generate testdata on first startup
         if (savedInstanceState == null) {
-            generateTestData();
+            // generateTestData();
         }
 
 
@@ -81,22 +86,72 @@ public class MainActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener ListListener() {
         return new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                Project temp = (Project) parent.getItemAtPosition(position);
+                final Project temp = (Project) parent.getItemAtPosition(position);
                 chosenIndex = position;
 
 
-                Intent i = new Intent(MainActivity.this, SingleProjectView.class);
+                AlertDialog.Builder projectAlert = new AlertDialog.Builder(MainActivity.this);
+                projectAlert.setTitle(allProjects.get(position).getTitle());
 
-                System.out.println("PASSING THIS :");
-                System.out.println(temp.getPersons());
-                System.out.println(temp.getTasks());
-                System.out.println("----------");
 
-                // pass project-object to other activity for modification
-                i.putExtra("passedObject", temp);
-                startActivityForResult(i, 1);
+                // dialog stuff for projects
+                projectAlert.setPositiveButton("View", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Intent i = new Intent(MainActivity.this, SingleProjectView.class);
+
+                        // pass project-object to other activity for modification
+                        i.putExtra("passedObject", temp);
+                        startActivityForResult(i, 1);
+
+                    }
+                });
+
+
+                projectAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+
+                projectAlert.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // CONfirmation dialog for deletion
+
+                        AlertDialog.Builder deleteAlert = new AlertDialog.Builder(MainActivity.this);
+                        deleteAlert.setTitle("Are you sure you want to delete project: "
+                                + allProjects.get(position).getTitle() + " ?");
+
+
+                        deleteAlert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                allProjects.remove(position);
+                                projectAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+
+                        deleteAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                        deleteAlert.show();
+                    }
+                });
+
+                projectAlert.show();
+
             }
         };
     }
@@ -111,14 +166,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
         super.onActivityResult(requestCode, resultCode, data);
 
         // update project to match user's added tasks
         allProjects.set(chosenIndex, (Project) data.getExtras().get("project"));
-
-        //Project receivedProject = (Project) data.getExtras().get("project");
-
 
     }
 
@@ -131,13 +182,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-
         // restore users choice from bundle, so can modify correct project
         chosenIndex = savedInstanceState.getInt("index");
-        //  allProjects = savedInstanceState.getParcelableArrayList("allProjects");
 
         super.onRestoreInstanceState(savedInstanceState);
-
     }
 
     /**
@@ -217,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String titleText;
                 String descriptionText;
-
 
 
                 if (!TextUtils.isEmpty(editTextOne.getText())) {

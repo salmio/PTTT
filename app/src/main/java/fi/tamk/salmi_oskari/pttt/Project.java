@@ -36,6 +36,7 @@ class Project implements Parcelable {
      * ArrayList containing all persons assigned to project
      */
     private ArrayList<Person> persons = new ArrayList<>();
+    
 
 
 

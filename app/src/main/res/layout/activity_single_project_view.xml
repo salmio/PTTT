@@ -11,7 +11,7 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.75">
+        android:layout_weight="0.70">
 
         <ListView
 
@@ -35,9 +35,10 @@
     </TableRow>
 
     <TableRow
+        android:gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.075">
+        android:layout_height="wrap_content"
+        >
 
         <Button
             android:id="@+id/addTaskButton"

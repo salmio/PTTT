@@ -142,6 +142,7 @@ public class SingleProjectView extends AppCompatActivity {
         personListView.setAdapter(personAdapter);
 
         taskListView.setOnItemClickListener(personListener());
+        personListView.setOnItemClickListener(deletePersonListener());
 
     }
 
@@ -185,7 +186,7 @@ public class SingleProjectView extends AppCompatActivity {
                     titleText = editTextOne.getText().toString();
 
                     ProjectTask toAdd = new ProjectTask(titleText, timeFloat);
-                    toAdd.setSelectedItems(selectedItems);
+                    toAdd.setSelectedItems(new boolean[selectedItems.length]);
                     allTasks.add(toAdd);
                     projectTaskAdapter.notifyDataSetChanged();
 
@@ -234,6 +235,7 @@ public class SingleProjectView extends AppCompatActivity {
                     nameText = editTextOne.getText().toString();
                     allPersons.add(new Person(nameText));
 
+
                     increaseSelectedSize();
 
                     personAdapter.notifyDataSetChanged();
@@ -252,6 +254,11 @@ public class SingleProjectView extends AppCompatActivity {
     }
 
 
+    /**
+     * Listener method for modifying persons in a task
+     *
+     * @return the listener object
+     */
     @NonNull
     private AdapterView.OnItemClickListener personListener() {
 
@@ -270,10 +277,10 @@ public class SingleProjectView extends AppCompatActivity {
                 }
 
 
-                csNames = names.toArray(new CharSequence[allTasks.size()]);
+                csNames = names.toArray(new CharSequence[allPersons.size()]);
+
                 AlertDialog.Builder personAlert = new AlertDialog.Builder(SingleProjectView.this);
                 personAlert.setTitle("Modify persons in task");
-
 
 
                 selectedItems = allTasks.get(position).getSelectedItems();
@@ -301,6 +308,7 @@ public class SingleProjectView extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
+
                         // add persons chosen to current task
                         for (int i = 0; i < selectedItems.length; i++) {
                             if (selectedItems[i] == true &&
@@ -309,7 +317,9 @@ public class SingleProjectView extends AppCompatActivity {
                                 allTasks.get(position).addPerson(allPersons.get(i));
                                 projectTaskAdapter.notifyDataSetChanged();
 
+
                             } else if (selectedItems[i] != true) {
+
 
                                 allTasks.get(position).removePerson(allPersons.get(i));
                                 projectTaskAdapter.notifyDataSetChanged();
@@ -330,6 +340,47 @@ public class SingleProjectView extends AppCompatActivity {
                     }
                 });
 
+
+                personAlert.setNeutralButton("Delete task", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                        // CONfirmation dialog for deletion
+
+                        AlertDialog.Builder deleteAlert = new AlertDialog.Builder(SingleProjectView.this);
+                        deleteAlert.setTitle("Are you sure you want to delete task: "
+                                + allTasks.get(position).getTitle() + " ?");
+
+
+                        deleteAlert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+
+                                allTasks.remove(position);
+                                projectTaskAdapter.notifyDataSetChanged();
+
+                            }
+                        });
+
+
+                        deleteAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+
+                        deleteAlert.show();
+
+
+                    }
+                });
+
+
                 personAlert.show();
 
             }
@@ -338,13 +389,105 @@ public class SingleProjectView extends AppCompatActivity {
 
 
     /**
+     * Listener method for removing persons from a project
+     *
+     * @return the listener object
+     */
+    private AdapterView.OnItemClickListener deletePersonListener() {
+
+        return new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    final int position, long id) {
+
+
+                AlertDialog.Builder deleteAlert = new AlertDialog.Builder(SingleProjectView.this);
+                deleteAlert.setTitle("Remove " + allPersons.get(position).getName()
+                        + " from this project?");
+
+
+                deleteAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        allPersons.remove(position);
+                        personAdapter.notifyDataSetChanged();
+
+                        boolean[] oldSelected = selectedItems;
+                        boolean[] newSelected = new boolean[selectedItems.length - 1];
+
+
+                        // refactoring selecteditems arrays to match new length
+                        int b = 0;
+                        for (int i = 0; i < oldSelected.length; i++) {
+
+                            // avoid indexoutofbounds
+                            if (b == newSelected.length ) {
+                                break;
+                            }
+
+                            newSelected[b] = oldSelected[i];
+
+                            if (i == position) {
+                                i++;
+                            }
+
+                            b++;
+
+
+                        }
+
+
+                        selectedItems = newSelected;
+
+
+                        // refactoring selecteditems arrays within tasks to match new length
+                        for (int c = 0; c < allTasks.size(); c++) {
+
+                            oldSelected = allTasks.get(c).getSelectedItems();
+                            newSelected = new boolean[oldSelected.length - 1];
+
+                            b = 0;
+                            for (int i = 0; i < oldSelected.length; i++) {
+
+                                if (b < newSelected.length) {
+                                    newSelected[b] = oldSelected[i];
+                                }
+
+                                b++;
+
+                            }
+
+                            allTasks.get(c).setSelectedItems(newSelected);
+                        }
+
+                    }
+                });
+
+
+                deleteAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+
+                deleteAlert.show();
+
+            }
+        };
+
+    }
+
+    /**
      * Method for refactoring a primitive array to increase it's size by 1
      */
     public void increaseSelectedSize() {
 
 
         // refactoring of array to increase size by 1
-        // TODO implement arraylist to replace
         boolean[] tmp = selectedItems;
         selectedItems = new boolean[selectedItems.length + 1];
 
@@ -355,16 +498,15 @@ public class SingleProjectView extends AppCompatActivity {
         for (int i = 0; i < allTasks.size(); i++) {
 
             boolean[] temp = allTasks.get(i).getSelectedItems();
-
             boolean[] selectedTemp = new boolean[temp.length + 1];
 
             for (int b = 0; b < temp.length; b++) {
-                selectedTemp[i] = temp[i];
+
+                selectedTemp[b] = temp[b];
             }
 
             allTasks.get(i).setSelectedItems(selectedTemp);
 
         }
-
     }
 }

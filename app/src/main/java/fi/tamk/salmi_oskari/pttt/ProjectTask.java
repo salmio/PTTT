@@ -31,7 +31,6 @@ class ProjectTask implements Parcelable {
     /**
      * Array of boolean flags indicating if a button is chosen or not
      *
-     * TODO implement this better
      */
     boolean[] selectedItems = new boolean[3];
 
