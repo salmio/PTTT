@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        // generate testdata on first startup
-        if (savedInstanceState == null) {
-            // generateTestData();
-        }
-
-
         // Restore state of allProjets
         if (savedInstanceState != null) {
             allProjects = savedInstanceState.getParcelableArrayList("allProjects");
@@ -202,36 +196,6 @@ public class MainActivity extends AppCompatActivity {
         outState.putParcelableArrayList("allProjects", allProjects);
 
         super.onSaveInstanceState(outState);
-    }
-
-
-    /**
-     * Method for generating test data to use for development purposes
-     */
-    private void generateTestData() {
-
-        testPersonData.add(new Person("pekka"));
-        testPersonData.add(new Person("tauno"));
-        testPersonData.add(new Person("kerttu"));
-
-
-        testTasks1.add(new ProjectTask("debuggign", 10));
-        testTasks1.add(new ProjectTask("lazing around", 666));
-
-        testTasks2.add(new ProjectTask("visual design", 6));
-        testTasks2.add(new ProjectTask("background research", 23));
-        testTasks2.add(new ProjectTask("documentation", 4));
-
-        testTasks3.add(new ProjectTask("stuff", 6766));
-        testTasks3.add(new ProjectTask("sleeping", 2));
-        testTasks3.add(new ProjectTask("boxing", 13.5f));
-
-
-        allProjects.add(new Project("testOne", "desc1", testTasks1, testPersonData));
-        allProjects.add(new Project("testTwo", "desc2", testTasks2, testPersonData));
-        allProjects.add(new Project("testThree", "desc3", testTasks3, testPersonData));
-
-
     }
 
 
