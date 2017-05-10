@@ -33,11 +33,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private ArrayAdapter<Project> projectAdapter;
 
-    /* test data for projects */
-    ArrayList<ProjectTask> testTasks1 = new ArrayList<>();
-    ArrayList<ProjectTask> testTasks2 = new ArrayList<>();
-    ArrayList<ProjectTask> testTasks3 = new ArrayList<>();
-    ArrayList<Person> testPersonData = new ArrayList<>();
 
     /**
      * Variable to store users chosen project's index
